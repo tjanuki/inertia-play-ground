@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -21,4 +23,13 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+});
+
+Route::get('/users', function () {
+    return Inertia::render('Users', [
+        'users' => Inertia::lazy(function () {
+            Log::info('Users data loaded');
+            return User::all();
+        })
+    ]);
 });
