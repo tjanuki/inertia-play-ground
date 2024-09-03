@@ -27,9 +27,7 @@ Route::middleware([
 
 Route::get('/users', function () {
     return Inertia::render('Users', [
-        'users' => Inertia::lazy(function () {
-            Log::info('Users data loaded');
-            return User::all();
-        })
+        'users' => fn () => User::paginate(5),
+        'companies' => fn () => \App\Models\Company::all(),
     ]);
-});
+})->name('users.index');
