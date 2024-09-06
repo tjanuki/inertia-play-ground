@@ -31,9 +31,10 @@ return Application::configure(basePath: dirname(__DIR__))
                     ->toResponse($request)
                     ->setStatusCode($response->getStatusCode());
             } elseif ($response->getStatusCode() === 419) {
-                return back()->with([
-                    'message' => 'The page expired, please try again.',
-                ]);
+                if ($request->expectsJson()) {
+                    return response()->json(['message' => 'Your session has expired.'], 419);
+                }
+                return redirect()->route('login')->with('message', 'Your session has expired. Please log in again.');
             }
 
             return $response;
