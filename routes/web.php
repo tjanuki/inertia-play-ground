@@ -17,7 +17,8 @@ Route::get('/', function () {
 });
 
 Route::middleware([
-    'auth:sanctum',
+    \App\Http\Middleware\StoreIntendedUrlAndMessage::class,
+//    'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
