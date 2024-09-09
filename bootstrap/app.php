@@ -1,11 +1,13 @@
 <?php
 
+use App\Listeners\HandleFailedLogin;
+use Illuminate\Auth\Events\Failed;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -22,11 +24,14 @@ return Application::configure(basePath: dirname(__DIR__))
 
         //
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+       ->withEvents(discover: [
+        __DIR__.'/../app/Listeners/HandleFailedLogin',
+    ])->withExceptions(function (Exceptions $exceptions) {
 
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
             logger(__METHOD__.':debug-log: $response->getStatusCode() '.var_export($response->getStatusCode(), true));
-            if (!app()->environment(['local', 'testing']) && in_array($response->getStatusCode(), [500, 503, 404, 403])) {
+            if (!app()->environment(['local', 'testing']) && in_array($response->getStatusCode(),
+                    [500, 503, 404, 403])) {
                 return Inertia::render('Error', ['status' => $response->getStatusCode()])
                     ->toResponse($request)
                     ->setStatusCode($response->getStatusCode());
@@ -38,4 +43,5 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return $response;
-        });})->create();
+        });
+    })->create();
