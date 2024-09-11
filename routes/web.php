@@ -24,6 +24,9 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+    Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+
 });
 
 Route::get('/users', function () {
@@ -32,7 +35,3 @@ Route::get('/users', function () {
         'companies' => fn () => \App\Models\Company::all(),
     ]);
 })->name('users.index');
-
-// New routes for the contact form
-Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
-Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');

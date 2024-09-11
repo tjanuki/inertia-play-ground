@@ -29,7 +29,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ])->withExceptions(function (Exceptions $exceptions) {
 
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
-            logger(__METHOD__.':debug-log: $response->getStatusCode() '.var_export($response->getStatusCode(), true));
             if (!app()->environment(['local', 'testing']) && in_array($response->getStatusCode(),
                     [500, 503, 404, 403])) {
                 return Inertia::render('Error', ['status' => $response->getStatusCode()])
@@ -37,9 +36,10 @@ return Application::configure(basePath: dirname(__DIR__))
                     ->setStatusCode($response->getStatusCode());
             } elseif ($response->getStatusCode() === 419) {
                 if ($request->expectsJson()) {
+                    session()->flash('message', 'Your session has expired. Please try again.');
                     return response()->json(['message' => 'Your session has expired.'], 419);
                 }
-                return redirect()->route('login')->with('message', 'Your session has expired. Please log in again.');
+                return redirect()->back()->with('message', 'Your session has expired. Please try again.');
             }
 
             return $response;
