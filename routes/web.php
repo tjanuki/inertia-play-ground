@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactRememberedController;
 use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Log;
@@ -26,6 +27,7 @@ Route::middleware([
     })->name('dashboard');
     Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
     Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+    Route::get('/contact-remembered', [ContactRememberedController::class, 'show'])->name('contact.show');
 
 });
 
